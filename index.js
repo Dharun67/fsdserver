@@ -5,21 +5,8 @@ const connect = require('./db/connect');
 
 const app = express();
 
-app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:8080',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:8080',
-      process.env.CLIENT_URL,
-    ].filter(Boolean);
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-}));
+// Allow all origins — works for Vercel, Render, Netlify, Lovable
+app.use(cors({ origin: '*', credentials: false }));
 app.use(express.json());
 
 app.use('/api/auth',      require('./routes/auth'));
@@ -37,8 +24,8 @@ app.use((_, res) => res.status(404).json({ error: 'Route not found' }));
 const PORT = process.env.PORT || 5000;
 
 connect().then(() => {
-  app.listen(PORT, () => console.log(`🚀 ChainFlow India API → http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`🚀 ChainFlow API → http://localhost:${PORT}`));
 }).catch((err) => {
-  console.error('❌ Failed to start server:', err.message);
+  console.error('❌ MongoDB connection failed:', err.message);
   process.exit(1);
 });
