@@ -5,6 +5,7 @@ const activitySchema = new mongoose.Schema({
   detail: { type: String },
   icon:   { type: String, default: 'package' },
   time:   { type: String },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
 const chartMonthlySchema = new mongoose.Schema({

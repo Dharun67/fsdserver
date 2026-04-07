@@ -7,7 +7,7 @@ const truckProductSchema = new mongoose.Schema({
 }, { _id: false });
 
 const truckSchema = new mongoose.Schema({
-  truckId:         { type: String, required: true, unique: true },
+  truckId:         { type: String, required: true },
   driver:          { type: String, required: true },
   route:           { type: String },
   origin:          { type: String, required: true },
@@ -16,6 +16,9 @@ const truckSchema = new mongoose.Schema({
   etaTime:         { type: String },   // "HH:MM" 24h
   currentLocation: { type: String },
   products:        [truckProductSchema],
+  userId:          { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
+
+truckSchema.index({ truckId: 1, userId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Truck', truckSchema);
