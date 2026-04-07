@@ -24,7 +24,19 @@ app.use((_, res) => res.status(404).json({ error: 'Route not found' }));
 const PORT = process.env.PORT || 5000;
 
 connect().then(() => {
-  app.listen(PORT, () => console.log(`🚀 ChainFlow API → http://localhost:${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`🚀 ChainFlow API → http://localhost:${PORT}`);
+    
+    // Keep-alive: ping self every 10 minutes to prevent Render sleep
+    if (process.env.NODE_ENV === 'production') {
+      setInterval(() => {
+        const url = process.env.BACKEND_URL || 'https://chainflowbackend.onrender.com';
+        fetch(`${url}/api/health`)
+          .then(() => console.log('✅ Keep-alive ping successful'))
+          .catch(() => console.log('⚠️ Keep-alive ping failed'));
+      }, 10 * 60 * 1000); // 10 minutes
+    }
+  });
 }).catch((err) => {
   console.error('❌ MongoDB connection failed:', err.message);
   process.exit(1);
